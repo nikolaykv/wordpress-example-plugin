@@ -1,0 +1,15 @@
+# Основные инструкции
+docker/.env
+database/*
+.DS_Store
+.idea
+
+# игнор node_modules плагина
+backend/wp-content/plugins/kvasov/node_modules/**/*
+
+# и другое
+backend/wp-content/plugins/kvasov/package-lock.json
+
+# Остановить игнорирование папок, в которых присутствует данный файл
+!.keep
+

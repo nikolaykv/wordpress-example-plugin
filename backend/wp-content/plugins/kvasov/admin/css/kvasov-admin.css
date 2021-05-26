@@ -1,0 +1,20 @@
+/**
+ * Весь CSS специфичный для административной части сайта плагина
+ * должен быть включён в этот файл
+ */
+.base-font-size {
+    font-size: 1rem;
+}
+
+.components-button.has-icon .dashicon {
+    margin-right: 2px;
+}
+
+.button-custom {
+    margin-bottom: 2rem !important;
+}
+
+.table-custom {
+    display: none;
+    margin-top: 2rem;
+}

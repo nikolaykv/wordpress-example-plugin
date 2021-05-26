@@ -1,0 +1,23 @@
+/**
+ * Весь CSS специфичный для публичной части сайта плагина
+ * должен быть включён в этот файл
+ */
+
+.outdated-notice {
+    border: 1px solid transparent;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    padding: 15px;
+}
+
+.outdated-notice.is-fresh {
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+    color: #3c763d;
+}
+
+.outdated-notice.is-outdated {
+    background-color: #f2dede;
+    border-color: #ebccd1;
+    color: #a94442;
+}

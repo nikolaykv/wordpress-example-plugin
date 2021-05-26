@@ -1,0 +1,31 @@
+{
+  "name": "kvasov",
+  "version": "1.0.0",
+  "description": "On version 1.0.0, it just adds a custom meta field for the Gutenberg editor",
+  "main": "index.js",
+  "scripts": {
+    "start": "wp-scripts start",
+    "build": "wp-scripts build"
+  },
+  "keywords": [
+    "Gutenberg",
+    "sheverev",
+    "kvasov",
+    "custom",
+    "plugin",
+    "custom",
+    "metaboxes"
+  ],
+  "author": "Nikolai Kvasov",
+  "license": "ISC",
+  "devDependencies": {
+    "@wordpress/scripts": "^16.1.0"
+  },
+  "dependencies": {
+    "@wordpress/components": "^14.1.0",
+    "@wordpress/data": "^5.1.0",
+    "@wordpress/edit-post": "^4.1.0",
+    "@wordpress/i18n": "^4.1.0",
+    "@wordpress/plugins": "^3.1.0"
+  }
+}
