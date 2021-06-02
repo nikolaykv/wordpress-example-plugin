@@ -463,7 +463,6 @@ class Kvasov_Admin {
 		register_post_type( strtolower( $cpt_name ), $opts );
 	}
 
-
 	/**
 	 * Регистрация пользовательской таксономии.
      *
@@ -503,4 +502,138 @@ class Kvasov_Admin {
 			)
 		);
 	}
+
+    /**
+     * Post type: News
+     */
+    public function register_news_type() {
+        $labels = [
+            "name"                     => __( "news", "kvasov" ),
+            "singular_name"            => __( "news", "kvasov" ),
+            "menu_name"                => __( "Наши новости", "kvasov" ),
+            "all_items"                => __( "Все новости", "kvasov" ),
+            "add_new"                  => __( "Добавить новую", "kvasov" ),
+            "add_new_item"             => __( "Добавить новую новость", "kvasov" ),
+            "edit_item"                => __( "Редактировать новость", "kvasov" ),
+            "new_item"                 => __( "Новость", "kvasov" ),
+            "view_item"                => __( "Посмотреть новость", "kvasov" ),
+            "view_items"               => __( "Посмотреть новость", "kvasov" ),
+            "search_items"             => __( "Искать новость", "kvasov" ),
+            "not_found"                => __( "Не найдено новостей", "kvasov" ),
+            "not_found_in_trash"       => __( "В корзине не найдено новостей", "kvasov" ),
+            "parent"                   => __( "Родительская новость", "kvasov" ),
+            "featured_image"           => __( "Лучшее изображение этой новости", "kvasov" ),
+            "set_featured_image"       => __( "Установить изображение для этой новости", "kvasov" ),
+            "remove_featured_image"    => __( "Удалить избранное изображение для этой новости", "kvasov" ),
+            "use_featured_image"       => __( "Использовать в качестве избранного изображения для этой новости", "kvasov" ),
+            "archives"                 => __( "архив новостей", "kvasov" ),
+            "insert_into_item"         => __( "Вставить в новости", "kvasov" ),
+            "uploaded_to_this_item"    => __( "Загрузить в эту новость", "kvasov" ),
+            "filter_items_list"        => __( "Фильтр списка новостей", "kvasov" ),
+            "items_list_navigation"    => __( "навигация по списку новостей", "kvasov" ),
+            "items_list"               => __( "список новостей", "kvasov" ),
+            "attributes"               => __( "атрибуты новостей", "kvasov" ),
+            "name_admin_bar"           => __( "Новости", "kvasov" ),
+            "item_published"           => __( "новость опубликована", "kvasov" ),
+            "item_published_privately" => __( "новость опубликована как приватная.", "kvasov" ),
+            "item_reverted_to_draft"   => __( "новость перемещена в черновик.", "kvasov" ),
+            "item_scheduled"           => __( "новость запланирована.", "kvasov" ),
+            "item_updated"             => __( "новость обновлена.", "kvasov" ),
+            "parent_item_colon"        => __( "Родительская новость", "kvasov" ),
+        ];
+
+        $args = [
+            "label"               => __( "news", "kvasov" ),
+            "labels"              => $labels,
+            "description"         => "Новости",
+            "public"              => true,
+            "publicly_queryable"  => true,
+            "show_ui"             => true,
+            "show_in_rest"        => true,
+            "rest_base"           => "kvasov",
+            //	"rest_controller_class" => "WP_REST_Posts_Controller",
+            "has_archive"         => "news-archive",
+            "show_in_menu"        => true,
+            "show_in_nav_menus"   => true,
+            "delete_with_user"    => false,
+            "exclude_from_search" => false,
+            "capability_type"     => "post",
+            "map_meta_cap"        => true,
+            "hierarchical"        => false,
+            "rewrite"             => false,
+            "query_var"           => false,
+            "menu_position"       => 3,
+            "menu_icon"           => "dashicons-format-aside",
+            "supports"            => [ "title", "editor", "thumbnail" ],
+            "taxonomies"          => [ "category", "post_tag" ],
+            "show_in_graphql"     => false,
+        ];
+
+        register_post_type( "news", $args );
+    }
+
+    /**
+     * Регистрация новой конечной точки для пользовательского типа записи "Новость"
+     */
+    public function register_news_rest_route() {
+        register_rest_route( 'kvasov/v1', '/getArticleList', array(
+            'methods'             => 'GET',
+            'callback'            => array($this, 'GetArticleList'),
+            'permission_callback' => '__return_true'
+        ) );
+    }
+
+    /**
+     * @param WP_REST_Request $request
+     * @return WP_Error|WP_REST_Response
+     */
+    public function GetArticleList(WP_REST_Request $request ) {
+        if ( isset( $request['count'] ) ) {
+
+            $args = array(
+                'numberposts' => $request['count'],
+                'post_type'   => 'news',
+                'post_status' => 'publish',
+                'orderby'     => 'date',
+                'order'       => 'ASC',
+            );
+
+            if ( $request['count'] === "0" ) {
+                $args['numberposts'] = - 1;
+            }
+
+            $news = get_posts( $args );
+
+            if ( empty( $news ) ) {
+                return new WP_Error(
+                    'not_content',
+                    "Нет содержимого",
+                    array(
+                        'status' => 204
+                    )
+                );
+            } else {
+                $response = array();
+                foreach ( $news as $item ) {
+                    $data = array(
+                        'title'      => $item->post_title,
+                        'link'       => $item->guid,
+                        'type'       => $item->post_type,
+                        'pictureUrl' => get_the_post_thumbnail_url( $item->ID, 'thumbnail' )
+                    );
+                    array_push( $response, $data );
+                }
+
+                return new WP_REST_Response( $response, 200 );
+            }
+        } else {
+            return new WP_Error(
+                'bad_request',
+                "Неверный запрос",
+                array(
+                    'status' => 400
+                )
+            );
+        }
+    }
 }

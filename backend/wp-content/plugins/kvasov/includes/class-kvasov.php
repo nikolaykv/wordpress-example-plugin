@@ -183,6 +183,12 @@ class Kvasov {
 		// Регистрация пользовательской таксономии.
 		$this->loader->add_action( 'init', $plugin_admin, 'kvasov_taxonomy' );
 
+		// Регистрация нового пользовательского типа записи: "Новость"
+        $this->loader->add_action( 'init', $plugin_admin, 'register_news_type' );
+
+        // Регистрация новой конечной точки для пользовательского типа записи "Новость"
+        $this->loader->add_action( 'rest_api_init', $plugin_admin, 'register_news_rest_route' );
+
 	}
 
 	/**
